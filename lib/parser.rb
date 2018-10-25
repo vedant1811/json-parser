@@ -13,12 +13,14 @@ class Parser
   end
 
 private
-  def parse
-    first_char = unparsed_string[0]
+  # All the parse* methods return the parsed object and update @unparsed_string
 
+  def parse
     case first_char
     when '"'
       parse_string
+    when '['
+      parse_array
     else
       if first_char.numeric?
         parse_int
@@ -38,5 +40,17 @@ private
     string = @unparsed_string[0...last_quotes_index]
     @unparsed_string = @unparsed_string[(last_quotes_index + 1)..-1]
     string
+  end
+
+  def parse_array
+    array = []
+
+    
+
+    array
+  end
+
+  def first_char
+    unparsed_string[0]
   end
 end
