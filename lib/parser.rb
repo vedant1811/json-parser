@@ -1,56 +1,41 @@
-class String
-  def numeric?
-    Float(self) != nil rescue false
-  end
-end
+require 'string'
 
-class Parser
-  attr_reader :unparsed_string, :parsed_object
+module Parser
 
-  def initialize(input)
-    @unparsed_string = input
-    @parsed_object = parse
-  end
+  # All the parse* methods take a @param input a ParsedObject
+  # and @return a ParsedObject
 
-private
-  # All the parse* methods return the parsed object and update @unparsed_string
-
-  def parse
-    case first_char
+  def parse_object(input)
+    case input.first_char
     when '"'
-      parse_string
+      parse_string(input)
     when '['
-      parse_array
+      parse_array(input)
     else
-      if first_char.numeric?
-        parse_int
+      if input.first_char.numeric?
+        parse_int(input)
       end
     end
   end
 
-  def parse_int
-    int = @unparsed_string.to_i
-    @unparsed_string.sub! int.to_s, ''
-    int
+private
+  def parse_int(input)
+    int = input.unparsed_string.to_i
+    input.transform_to(int.to_s.size - 1, int)
   end
 
-  def parse_string
-    @unparsed_string.slice! 0 # remove the first "
-    last_quotes_index = @unparsed_string.index '"'
-    string = @unparsed_string[0...last_quotes_index]
-    @unparsed_string = @unparsed_string[(last_quotes_index + 1)..-1]
-    string
+  def parse_string(input)
+    input_without_first_quotes = input.transform_to(0)
+    last_quotes_index = input_without_first_quotes.unparsed_string.index '"'
+    string = input_without_first_quotes.unparsed_string[0...last_quotes_index]
+    input_without_first_quotes.transform_to(last_quotes_index, string)
   end
 
   def parse_array
     array = []
 
-    
+
 
     array
-  end
-
-  def first_char
-    unparsed_string[0]
   end
 end

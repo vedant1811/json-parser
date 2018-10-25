@@ -1,7 +1,11 @@
 require 'parser'
+require 'parsed_object'
+
+include Parser
 
 def parse(input)
-  parser = Parser.new input
+  unparsed = ParsedObject.new(input)
+  parsed_object = parse_object(unparsed)
 
-  [parser.parsed_object, parser.unparsed_string]
+  [parsed_object.object, parsed_object.unparsed_string]
 end
