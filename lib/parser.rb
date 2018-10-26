@@ -25,17 +25,28 @@ private
   end
 
   def parse_string(input)
-    input_without_first_quotes = input.transform_to(0)
+    input_without_first_quotes = input.shift
     last_quotes_index = input_without_first_quotes.unparsed_string.index '"'
     string = input_without_first_quotes.unparsed_string[0...last_quotes_index]
     input_without_first_quotes.transform_to(last_quotes_index, string)
   end
 
-  def parse_array
+  def parse_array(input)
     array = []
+    unread = input
 
+    while unread.first_char != ']'
+      # error case. non terminating array
+      return input unless [',' , '['].include?(unread.first_char)
 
+      unread = unread.shift
+      # empty array
+      break if unread.first_char == ']'
 
-    array
+      unread = parse_object(unread)
+      array << unread.object
+    end
+
+    unread.transform_to(0, array)
   end
 end

@@ -1,3 +1,4 @@
+# An immutable class
 class ParsedObject
   attr_reader :object, :unparsed_string
 
@@ -13,5 +14,13 @@ class ParsedObject
   # could be +nil+
   def first_char
     unparsed_string[0]
+  end
+
+  def shift
+    transform_to(0)
+  end
+
+  def to_s
+    [object, unparsed_string]
   end
 end
