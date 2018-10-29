@@ -11,6 +11,8 @@ module Parser
       parse_string(input)
     when '['
       parse_array(input)
+    when '{'
+      parse_hash(input)
     else
       if input.first_char.numeric?
         parse_int(input)
@@ -36,7 +38,7 @@ private
     unread = input
 
     while unread.first_char != ']'
-      # error case. non terminating array
+      # error case. non terminating
       return input unless [',' , '['].include?(unread.first_char)
 
       unread = unread.shift
@@ -48,5 +50,33 @@ private
     end
 
     unread.transform_to(0, array)
+  end
+
+  def parse_hash(input)
+    hash = {}
+    unread = input
+
+    while unread.first_char != '}'
+      # error case. non terminating
+      return input unless [',' , '{'].include?(unread.first_char)
+
+      unread = unread.shift
+      # empty hash
+      break if unread.first_char == '}'
+
+      unread = parse_object(unread)
+      key = unread.object.to_sym
+
+      # error case
+      return input unless ':' == unread.first_char
+      unread = unread.shift
+
+      unread = parse_object(unread)
+      value = unread.object
+
+      hash[key] = value
+    end
+
+    unread.transform_to(0, hash)
   end
 end
